@@ -1,0 +1,32 @@
+<main>
+  <section>
+    <p>
+      Wallet:
+      {{ walletName() }}
+    </p>
+
+    <p>
+      Public Key:
+
+      @if (publicKey(); as publicKey) {
+        <span>
+          {{ publicKey.toBase58() | hdObscureAddress }}
+        </span>
+      } @else {
+        <span> None </span>
+      }
+    </p>
+
+    <p>
+      Status:
+      <span
+        [ngClass]="{
+          'text-red-600': !connected(),
+          'text-green-600': connected()
+        }"
+      >
+        {{ connected() ? 'Connected' : 'Disconnected' }}
+      </span>
+    </p>
+  </section>
+</main>
