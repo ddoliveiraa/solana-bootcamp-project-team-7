@@ -1,0 +1,5 @@
+<!-- src/app/image-upload/image-upload.component.html -->
+<label class="image-upload-container btn btn-primary">
+    <span>Select Image</span>
+    <input #imageInput type="file" accept="image/*" (change)="processFile(imageInput)">
+</label>
