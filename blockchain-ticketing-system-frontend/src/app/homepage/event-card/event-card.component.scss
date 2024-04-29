@@ -1,0 +1,51 @@
+:host
+{
+  .ticket-card
+  {
+    width: 300px; // Adjust the width as needed
+    height: 470px;
+    margin: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    img
+    {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .mat-card-content
+    {
+      padding: 16px;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 0;
+    }
+
+    p {
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .description {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3; // Limiting description to 3 lines
+      -webkit-box-orient: vertical;
+    }
+  }
+
+  .mat-mdc-card-content
+  {
+    padding-top: 16px;
+  }
+}

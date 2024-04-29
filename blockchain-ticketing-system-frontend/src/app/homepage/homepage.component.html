@@ -2,7 +2,26 @@
   @if (publicKey(); as publicKey)
   {
     <mat-tab-group>
-      <mat-tab label="Available Events"> Content 1 </mat-tab>
+      <mat-tab label="Available Events">
+
+        <div class="col d-flex cards">
+          @for (event of events; track event)
+          {
+            <app-event-card
+              [name]="event.name"
+              [price]="event.price"
+              [date]="event.date"
+              [country]="event.country"
+              [city]="event.city"
+              [description]="event.description"
+              [imageUrl]="event.imageUrl"
+            >
+            </app-event-card>
+          }
+        </div>
+
+
+      </mat-tab>
       <mat-tab label="Past Events"> Content 2 </mat-tab>
       <mat-tab label="My Tickets"> Content 3 </mat-tab>
     </mat-tab-group>
@@ -42,10 +61,6 @@
         </mat-form-field>
         <mat-form-field class="w-100">
           <mat-label>Price</mat-label>
-          <input matInput>
-        </mat-form-field>
-        <mat-form-field class="w-100">
-          <mat-label>Date</mat-label>
           <input matInput>
         </mat-form-field>
         <mat-form-field class="w-100 z-index">

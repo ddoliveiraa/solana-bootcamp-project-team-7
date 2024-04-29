@@ -18,6 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
+import { EventCardComponent } from './event-card/event-card.component';
 
 @Component({
   selector: 'app-homepage',
@@ -32,7 +33,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatInputModule,
     MatFormFieldModule,
     MatDatepickerModule,
-    MatSelectModule
+    MatSelectModule,
+    EventCardComponent
   ],
   templateUrl: './homepage.component.html',
   providers: [provideNativeDateAdapter()],
@@ -80,9 +82,49 @@ export class HomepageComponent
     { code: "US", label: "🇺🇸 United States" },
   ];
 
+  public events = [
+    {
+      name: "Concert in the Park",
+      price: 50,
+      date: "2024-05-15",
+      country: "United States",
+      city: "New York",
+      description: "Join us for an evening of live music and fun in Central Park.",
+      imageUrl: ""
+    },
+    {
+      name: "Tech Conference",
+      price: 200,
+      date: "2024-06-20",
+      country: "Germany",
+      city: "Berlin",
+      description: "A conference for tech enthusiasts and professionals, featuring talks and workshops on the latest trends and technologies.",
+      imageUrl: ""
+    },
+    {
+      name: "Food Festival",
+      price: 30,
+      date: "2024-07-10",
+      country: "Italy",
+      city: "Rome",
+      description: "Experience the rich flavors of Italian cuisine at our annual food festival.",
+      imageUrl: ""
+    },
+    {
+      name: "Food Festival",
+      price: 30,
+      date: "2024-07-10",
+      country: "Italy",
+      city: "Rome",
+      description: "Experience the rich flavors of Italian cuisine at our annual food festival.",
+      imageUrl: ""
+    },
+    // Add more events as needed
+  ];
+
 	public open(content: TemplateRef<any>): void
   {
-		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' }).result.then(
 			(result) =>
       {
 				this.closeResult = `Closed with: ${result}`;

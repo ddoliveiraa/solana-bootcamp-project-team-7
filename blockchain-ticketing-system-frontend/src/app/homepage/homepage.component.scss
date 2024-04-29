@@ -11,4 +11,10 @@
     bottom: 20px;
     right: 40px;
   }
+
+  .cards
+  {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 }

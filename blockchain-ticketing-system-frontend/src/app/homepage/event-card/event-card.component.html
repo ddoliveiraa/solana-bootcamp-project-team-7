@@ -1,0 +1,40 @@
+<mat-card class="ticket-card">
+  <div class="d-flex justify-content-end">
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>open_in_new</mat-icon>
+        <span>View event</span>
+      </button>
+      <button mat-menu-item disabled>
+        <mat-icon>edit</mat-icon>
+        <span>Edit event</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>delete</mat-icon>
+        <span>Delete</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>cancel</mat-icon>
+        <span>Cancel</span>
+      </button>
+    </mat-menu>
+  </div>
+  @if (imageUrl)
+  {
+    <img mat-card-image src="{{ imageUrl }}" alt="Ticket Image">
+  }
+  @else
+  {
+    <img mat-card-image src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Ticket Image">
+  }
+  <mat-card-content class="d-flex flex-column justify-content-between">
+    <h2>{{ name }}</h2>
+    <p>Price: {{ price }}</p>
+    <p>Date: {{ date }}</p>
+    <p>Location: {{ city }}, {{ country }}</p>
+    <p class="description">Description: {{ description }}</p>
+  </mat-card-content>
+</mat-card>
