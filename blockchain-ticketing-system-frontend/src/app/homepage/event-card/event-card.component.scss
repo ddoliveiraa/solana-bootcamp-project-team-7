@@ -2,10 +2,11 @@
 {
   .ticket-card
   {
-    width: 300px; // Adjust the width as needed
+    width: 300px;
     height: 470px;
-    margin: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
 
     img
     {
@@ -20,26 +21,30 @@
       flex-direction: column;
     }
 
-    img {
+    img
+    {
       max-width: 100%;
       height: auto;
     }
 
-    h2 {
+    h2
+    {
       font-size: 1.2rem;
       margin-top: 0;
     }
 
-    p {
+    p
+    {
       margin-bottom: 8px;
       font-size: 0.9rem;
     }
 
-    .description {
+    .description
+    {
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
-      -webkit-line-clamp: 3; // Limiting description to 3 lines
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
     }
   }

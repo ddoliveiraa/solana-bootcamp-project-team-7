@@ -47,6 +47,18 @@ export class HomepageComponent
   public readonly publicKey = injectPublicKey();
   public readonly walletName = computed(() => this.wallet()?.adapter.name ?? 'None');
 
+  public selectedEvent = {
+    name: '',
+    price: 0,
+    numberOfTickets: 0,
+    date: '',
+    address: '',
+    country: '',
+    city: '',
+    description: '',
+    imageUrl: '',
+  };
+
   private modalService = inject(NgbModal);
 	closeResult = '';
 
@@ -86,8 +98,9 @@ export class HomepageComponent
     {
       name: "Concert in the Park",
       price: 50,
-      date: "2024-05-15",
-      country: "United States",
+      date: new Date(),
+      address: "123 Main St, Anytown USA",
+      country: "US",
       city: "New York",
       description: "Join us for an evening of live music and fun in Central Park.",
       imageUrl: ""
@@ -95,8 +108,9 @@ export class HomepageComponent
     {
       name: "Tech Conference",
       price: 200,
-      date: "2024-06-20",
-      country: "Germany",
+      date: new Date(),
+      address: "456 Elm St, Anytown USA",
+      country: "US",
       city: "Berlin",
       description: "A conference for tech enthusiasts and professionals, featuring talks and workshops on the latest trends and technologies.",
       imageUrl: ""
@@ -104,8 +118,9 @@ export class HomepageComponent
     {
       name: "Food Festival",
       price: 30,
-      date: "2024-07-10",
-      country: "Italy",
+      date: new Date(),
+      address: "789 Oak St, Anytown USA",
+      country: "IT",
       city: "Rome",
       description: "Experience the rich flavors of Italian cuisine at our annual food festival.",
       imageUrl: ""
@@ -113,14 +128,23 @@ export class HomepageComponent
     {
       name: "Food Festival",
       price: 30,
-      date: "2024-07-10",
-      country: "Italy",
-      city: "Rome",
+      date: new Date(),
+      address: "Avenida Lourenço Peixinho",
+      country: "PT",
+      city: "Aveiro",
       description: "Experience the rich flavors of Italian cuisine at our annual food festival.",
       imageUrl: ""
-    },
-    // Add more events as needed
+    }
   ];
+
+  public imageUrl: string | undefined;
+
+  public selectAndOpen(content: TemplateRef<any>, event: any): void
+  {
+    this.open(content);
+    this.selectedEvent = event;
+    this.imageUrl = event.imageUrl;
+  }
 
 	public open(content: TemplateRef<any>): void
   {
@@ -148,4 +172,29 @@ export class HomepageComponent
 				return `with: ${reason}`;
 		}
 	}
+
+  public uploadImage(input: HTMLInputElement): void
+  {
+    input.click();
+  }
+
+  public onFileSelected(event: any): void
+  {
+    const file: File = event.target.files[0];
+
+    if (file)
+    {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () =>
+      {
+        this.imageUrl = reader.result as string;
+      };
+    }
+  }
+
+  public removeImage(): void
+  {
+    this.imageUrl = undefined;
+  }
 }
