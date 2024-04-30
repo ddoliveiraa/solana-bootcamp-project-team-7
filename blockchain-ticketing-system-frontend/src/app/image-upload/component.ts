@@ -4,7 +4,7 @@ import { create } from 'ipfs-http-client';
 @Component({
     selector: 'app-image-upload',
     templateUrl: './image-upload.component.html',
-    styleUrls: ['./image-upload.component.css']
+    // styleUrls: ['./image-upload.component.css']
 })
 export class ImageUploadComponent {
     async processFile(imageInput: any): Promise<void> {
