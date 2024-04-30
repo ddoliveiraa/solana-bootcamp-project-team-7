@@ -1,5 +1,6 @@
 <!-- src/app/image-upload/image-upload.component.html -->
 <label class="image-upload-container btn btn-primary">
+    <button (click)="imageInput.click()">Upload Image</button>
     <span>Select Image</span>
     <input #imageInput type="file" accept="image/*" (change)="processFile(imageInput)">
 </label>
