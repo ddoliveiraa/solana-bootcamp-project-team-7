@@ -229,8 +229,14 @@
           <textarea matInput placeholder="Enter a description" [value]="selectedEvent.description"></textarea>
         </mat-form-field>
 		</form>
+    <!-- Event Image Upload outside the form -->
+    <div class="mat-form-field w-100">
+      <button mat-raised-button color="primary" routerLink="/image-upload">Upload Images</button>
+    </div>
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Create</button>
 	</div>
 </ng-template>
+
+
