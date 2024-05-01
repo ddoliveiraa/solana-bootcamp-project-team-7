@@ -18,6 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
+import { EventCardComponent } from './event-card/event-card.component';
 
 @Component({
   selector: 'app-homepage',
@@ -32,7 +33,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatInputModule,
     MatFormFieldModule,
     MatDatepickerModule,
-    MatSelectModule
+    MatSelectModule,
+    EventCardComponent
   ],
   templateUrl: './homepage.component.html',
   providers: [provideNativeDateAdapter()],
@@ -44,6 +46,18 @@ export class HomepageComponent
   public readonly connected = injectConnected();
   public readonly publicKey = injectPublicKey();
   public readonly walletName = computed(() => this.wallet()?.adapter.name ?? 'None');
+
+  public selectedEvent = {
+    name: '',
+    price: 0,
+    numberOfTickets: 0,
+    date: '',
+    address: '',
+    country: '',
+    city: '',
+    description: '',
+    imageUrl: '',
+  };
 
   private modalService = inject(NgbModal);
 	closeResult = '';
@@ -80,9 +94,61 @@ export class HomepageComponent
     { code: "US", label: "🇺🇸 United States" },
   ];
 
+  public events = [
+    {
+      name: "Concert in the Park",
+      price: 50,
+      date: new Date(),
+      address: "123 Main St, Anytown USA",
+      country: "US",
+      city: "New York",
+      description: "Join us for an evening of live music and fun in Central Park.",
+      imageUrl: ""
+    },
+    {
+      name: "Tech Conference",
+      price: 200,
+      date: new Date(),
+      address: "456 Elm St, Anytown USA",
+      country: "US",
+      city: "Berlin",
+      description: "A conference for tech enthusiasts and professionals, featuring talks and workshops on the latest trends and technologies.",
+      imageUrl: ""
+    },
+    {
+      name: "Food Festival",
+      price: 30,
+      date: new Date(),
+      address: "789 Oak St, Anytown USA",
+      country: "IT",
+      city: "Rome",
+      description: "Experience the rich flavors of Italian cuisine at our annual food festival.",
+      imageUrl: ""
+    },
+    {
+      name: "Food Festival",
+      price: 30,
+      date: new Date(),
+      address: "Avenida Lourenço Peixinho",
+      country: "PT",
+      city: "Aveiro",
+      description: "Experience the rich flavors of Italian cuisine at our annual food festival.",
+      imageUrl: ""
+    }
+  ];
+
+  public imageUrl: string | undefined;
+
+  public selectAndOpen(content: TemplateRef<any>, event: any): void
+  {
+    this.open(content);
+    this.selectedEvent = event;
+    this.imageUrl = event.imageUrl;
+  }
+
 	public open(content: TemplateRef<any>): void
   {
-		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' }).result.then(
 			(result) =>
       {
 				this.closeResult = `Closed with: ${result}`;
@@ -106,4 +172,29 @@ export class HomepageComponent
 				return `with: ${reason}`;
 		}
 	}
+
+  public uploadImage(input: HTMLInputElement): void
+  {
+    input.click();
+  }
+
+  public onFileSelected(event: any): void
+  {
+    const file: File = event.target.files[0];
+
+    if (file)
+    {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () =>
+      {
+        this.imageUrl = reader.result as string;
+      };
+    }
+  }
+
+  public removeImage(): void
+  {
+    this.imageUrl = undefined;
+  }
 }
