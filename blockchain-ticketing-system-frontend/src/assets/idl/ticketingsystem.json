@@ -1,0 +1,309 @@
+{
+  "address": "BWmuCxJqRqUwXu7rH4oJ5fYUQJjpu5umSw3SUidkY1Lq",
+  "metadata": {
+    "name": "ticketingsystem",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "add_new_event",
+      "discriminator": [
+        3,
+        93,
+        90,
+        63,
+        78,
+        138,
+        236,
+        213
+      ],
+      "accounts": [
+        {
+          "name": "event",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "creation_date",
+          "type": "string"
+        },
+        {
+          "name": "price",
+          "type": "i32"
+        },
+        {
+          "name": "country",
+          "type": "string"
+        },
+        {
+          "name": "city",
+          "type": "string"
+        },
+        {
+          "name": "address",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "initial_amount_of_tickets",
+          "type": "i32"
+        }
+      ]
+    },
+    {
+      "name": "buy_ticket",
+      "discriminator": [
+        11,
+        24,
+        17,
+        193,
+        168,
+        116,
+        164,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "ticket",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "buyer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "event"
+        },
+        {
+          "name": "creator"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "transaction_date",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "i32"
+        }
+      ]
+    },
+    {
+      "name": "delete_event",
+      "discriminator": [
+        103,
+        111,
+        95,
+        106,
+        232,
+        24,
+        190,
+        84
+      ],
+      "accounts": [
+        {
+          "name": "event",
+          "writable": true
+        },
+        {
+          "name": "creator",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "edit_event",
+      "discriminator": [
+        175,
+        88,
+        87,
+        49,
+        41,
+        144,
+        33,
+        42
+      ],
+      "accounts": [
+        {
+          "name": "event",
+          "writable": true
+        },
+        {
+          "name": "creator"
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "i32"
+        },
+        {
+          "name": "country",
+          "type": "string"
+        },
+        {
+          "name": "city",
+          "type": "string"
+        },
+        {
+          "name": "address",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "initial_amount_of_tickets",
+          "type": "i32"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Event",
+      "discriminator": [
+        125,
+        192,
+        125,
+        158,
+        9,
+        115,
+        152,
+        233
+      ]
+    },
+    {
+      "name": "Ticket",
+      "discriminator": [
+        41,
+        228,
+        24,
+        165,
+        78,
+        90,
+        235,
+        200
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidDelete",
+      "msg": "NOT ALLOWED TO DELETE"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidCreator",
+      "msg": "Invalid Creator"
+    }
+  ],
+  "types": [
+    {
+      "name": "Event",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "creation_date",
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "type": "i32"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "initial_amount_of_tickets",
+            "type": "i32"
+          },
+          {
+            "name": "amount_of_tickets_sold",
+            "type": "i32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ticket",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "pubkey"
+          },
+          {
+            "name": "event_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyer_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "transaction_date",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "i32"
+          },
+          {
+            "name": "total_price",
+            "type": "i32"
+          }
+        ]
+      }
+    }
+  ]
+}

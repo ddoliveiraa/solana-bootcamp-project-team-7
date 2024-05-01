@@ -2,9 +2,11 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, TemplateRef } from '@angular/core';
 import {
+  ConnectionStore,
   injectConnected,
   injectPublicKey,
   injectWallet,
+  WalletStore,
 } from '@heavy-duty/wallet-adapter';
 import { HdObscureAddressPipe } from '@heavy-duty/wallet-adapter-cdk';
 import { HdWalletMultiButtonComponent } from '@heavy-duty/wallet-adapter-material';
@@ -19,6 +21,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import { EventCardComponent } from './event-card/event-card.component';
+import { Connection, PublicKey } from '@solana/web3.js';
+import { AnchorProvider, Idl, Program } from '@project-serum/anchor';
+import idl from '../../assets/idl/ticketingsystem.json';
 
 @Component({
   selector: 'app-homepage',
@@ -42,10 +47,13 @@ import { EventCardComponent } from './event-card/event-card.component';
 })
 export class HomepageComponent
 {
+  public program: Program;
   public readonly wallet = injectWallet();
   public readonly connected = injectConnected();
   public readonly publicKey = injectPublicKey();
   public readonly walletName = computed(() => this.wallet()?.adapter.name ?? 'None');
+  public connection: Connection;
+  public provider: AnchorProvider;
 
   public selectedEvent = {
     name: '',
@@ -138,6 +146,47 @@ export class HomepageComponent
   ];
 
   public imageUrl: string | undefined;
+
+  constructor(
+    private readonly hdConnectionStore: ConnectionStore,
+    private readonly hdWalletStore: WalletStore
+  ) {}
+
+  public async ngOnInit(): Promise<void> {
+    this.hdConnectionStore.setEndpoint('https://api.devnet.solana.com');
+    this.setProvider();
+  }
+
+  public async setProvider(): Promise<void> {
+    const programID = new PublicKey(
+      'BWmuCxJqRqUwXu7rH4oJ5fYUQJjpu5umSw3SUidkY1Lq'
+    );
+    const commitment = 'processed';
+    const preflightCommitment = 'processed';
+
+    this.connection = new Connection(
+      'https://api.devnet.solana.com',
+      'processed'
+    );
+
+
+    this.hdWalletStore.anchorWallet$.subscribe((wallet) => {
+      if (wallet) {
+      this.provider = new AnchorProvider(
+        this.connection,
+        wallet,
+        { preflightCommitment, commitment }
+      );
+
+      this.program = new Program(idl as unknown as Idl, programID, this.provider);
+      }
+    })
+
+
+    this.hdWalletStore.connected$.subscribe((connected) => {
+      console.log('Connected: ', connected);
+    });
+  }
 
   public selectAndOpen(content: TemplateRef<any>, event: any): void
   {
