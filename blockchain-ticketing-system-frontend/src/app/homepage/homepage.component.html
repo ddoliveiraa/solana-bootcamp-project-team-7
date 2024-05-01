@@ -84,7 +84,7 @@
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
 	<div class="modal-body">
-		<form>
+		<form [formGroup]="eventForm">
         <div class="d-flex justify-content-center">
           <div class="upload-placeholder" (click)="uploadImage(fileInput)">
             @if (!imageUrl)
@@ -100,34 +100,34 @@
         </div>
         <mat-form-field class="w-100">
           <mat-label>Name</mat-label>
-          <input matInput>
+          <input matInput formControlName="name">
         </mat-form-field>
         <mat-form-field class="w-100">
           <mat-label>Number of tickets</mat-label>
-          <input matInput>
+          <input matInput formControlName="numberOfTickets">
         </mat-form-field>
         <mat-form-field class="w-100">
           <mat-label>Price</mat-label>
-          <input matInput>
+          <input matInput formControlName="price">
         </mat-form-field>
         <mat-form-field class="w-100 z-index">
           <mat-label>Choose a date</mat-label>
-          <input matInput [matDatepicker]="picker">
+          <input matInput [matDatepicker]="picker" formControlName="date">
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
         <mat-form-field class="w-100">
           <mat-label>Addres</mat-label>
-          <input matInput>
+          <input matInput formControlName="address">
         </mat-form-field>
         <div class="d-flex justify-content-between">
           <mat-form-field class="w-40">
             <mat-label>City</mat-label>
-            <input matInput>
+            <input matInput formControlName="city">
           </mat-form-field>
           <mat-form-field class="w-40">
             <mat-label>Country</mat-label>
-            <mat-select>
+            <mat-select formControlName="country">
               @for (country of countries; track country)
               {
                 <mat-option [value]="country.code">{{country.label}}</mat-option>
@@ -137,12 +137,12 @@
         </div>
         <mat-form-field class="w-100">
           <mat-label>Description</mat-label>
-          <textarea matInput placeholder="Enter a description"></textarea>
+          <textarea matInput placeholder="Enter a description" formControlName="description"></textarea>
         </mat-form-field>
 		</form>
 	</div>
 	<div class="modal-footer">
-		<button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Create</button>
+		<button type="button" class="btn btn-outline-dark" (click)="saveEvent(modal)">Create</button>
 	</div>
 </ng-template>
 
@@ -173,64 +173,64 @@
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
 	<div class="modal-body">
-		<form>
-        <div class="d-flex justify-content-center">
-          <div class="upload-placeholder" (click)="uploadImage(fileInput)">
-            @if (!imageUrl)
-            {
-              <div class="plus">+</div>
-            }
-            @else
-            {
-              <img [src]="imageUrl" (click)="removeImage()" alt="Uploaded Image">
-            }
-          </div>
-          <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)">
+		<form [formGroup]="eventForm">
+      <div class="d-flex justify-content-center">
+        <div class="upload-placeholder" (click)="uploadImage(fileInput)">
+          @if (!imageUrl)
+          {
+            <div class="plus">+</div>
+          }
+          @else
+          {
+            <img [src]="imageUrl" (click)="removeImage()" alt="Uploaded Image">
+          }
         </div>
-        <mat-form-field class="w-100">
-          <mat-label>Name</mat-label>
-          <input matInput [value]="selectedEvent.name">
+        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)">
+      </div>
+      <mat-form-field class="w-100">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name">
+      </mat-form-field>
+      <mat-form-field class="w-100">
+        <mat-label>Number of tickets</mat-label>
+        <input matInput formControlName="numberOfTickets">
+      </mat-form-field>
+      <mat-form-field class="w-100">
+        <mat-label>Price</mat-label>
+        <input matInput formControlName="price">
+      </mat-form-field>
+      <mat-form-field class="w-100 z-index">
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="w-100">
+        <mat-label>Addres</mat-label>
+        <input matInput formControlName="address">
+      </mat-form-field>
+      <div class="d-flex justify-content-between">
+        <mat-form-field class="w-40">
+          <mat-label>City</mat-label>
+          <input matInput formControlName="city">
         </mat-form-field>
-        <mat-form-field class="w-100">
-          <mat-label>Number of tickets</mat-label>
-          <input matInput [value]="selectedEvent.numberOfTickets">
+        <mat-form-field class="w-40">
+          <mat-label>Country</mat-label>
+          <mat-select formControlName="country">
+            @for (country of countries; track country)
+            {
+              <mat-option [value]="country.code">{{country.label}}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
-        <mat-form-field class="w-100">
-          <mat-label>Price</mat-label>
-          <input matInput [value]="selectedEvent.price">
-        </mat-form-field>
-        <mat-form-field class="w-100 z-index">
-          <mat-label>Choose a date</mat-label>
-          <input matInput [matDatepicker]="picker" [value]="selectedEvent.date">
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-        <mat-form-field class="w-100">
-          <mat-label>Address</mat-label>
-          <input matInput [value]="selectedEvent.address">
-        </mat-form-field>
-        <div class="d-flex justify-content-between">
-          <mat-form-field class="w-40">
-            <mat-label>City</mat-label>
-            <input matInput [value]="selectedEvent.city">
-          </mat-form-field>
-          <mat-form-field class="w-40">
-            <mat-label>Country</mat-label>
-            <mat-select [value]="selectedEvent.country">
-              @for (country of countries; track country)
-              {
-                <mat-option [value]="country.code">{{country.label}}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <mat-form-field class="w-100">
-          <mat-label>Description</mat-label>
-          <textarea matInput placeholder="Enter a description" [value]="selectedEvent.description"></textarea>
-        </mat-form-field>
-		</form>
+      </div>
+      <mat-form-field class="w-100">
+        <mat-label>Description</mat-label>
+        <textarea matInput placeholder="Enter a description" formControlName="description"></textarea>
+      </mat-form-field>
+  </form>
 	</div>
 	<div class="modal-footer">
-		<button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Create</button>
+		<button type="button" class="btn btn-outline-dark" (click)="saveEditedEvent(modal)">Create</button>
 	</div>
 </ng-template>

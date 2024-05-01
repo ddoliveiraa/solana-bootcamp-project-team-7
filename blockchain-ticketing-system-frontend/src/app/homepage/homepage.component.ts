@@ -1,6 +1,6 @@
 
 import { NgClass } from '@angular/common';
-import { Component, computed, inject, TemplateRef } from '@angular/core';
+import { Component, computed, inject, OnInit, TemplateRef } from '@angular/core';
 import {
   injectConnected,
   injectPublicKey,
@@ -19,6 +19,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import { EventCardComponent } from './event-card/event-card.component';
+import { createHelia } from 'helia'
+import { strings } from '@helia/strings'
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-homepage',
@@ -34,18 +37,43 @@ import { EventCardComponent } from './event-card/event-card.component';
     MatFormFieldModule,
     MatDatepickerModule,
     MatSelectModule,
-    EventCardComponent
+    EventCardComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './homepage.component.html',
   providers: [provideNativeDateAdapter()],
   styleUrl: './homepage.component.scss'
 })
-export class HomepageComponent
+export class HomepageComponent implements OnInit
 {
+  public helia: any;
+
+  constructor()
+  {
+
+  }
+  public async ngOnInit(): Promise<void>
+  {
+
+
+  }
+
   public readonly wallet = injectWallet();
   public readonly connected = injectConnected();
   public readonly publicKey = injectPublicKey();
   public readonly walletName = computed(() => this.wallet()?.adapter.name ?? 'None');
+
+  public eventForm = new FormGroup({
+    name: new FormControl(''),
+    price: new FormControl(0),
+    numberOfTickets: new FormControl(0),
+    date: new FormControl(''),
+    address: new FormControl(''),
+    country: new FormControl(''),
+    city: new FormControl(''),
+    description: new FormControl(''),
+    imageUrl: new FormControl(''),
+  });
 
   public selectedEvent = {
     name: '',
@@ -98,6 +126,7 @@ export class HomepageComponent
     {
       name: "Concert in the Park",
       price: 50,
+      numberOfTickets: 50,
       date: new Date(),
       address: "123 Main St, Anytown USA",
       country: "US",
@@ -108,6 +137,7 @@ export class HomepageComponent
     {
       name: "Tech Conference",
       price: 200,
+      numberOfTickets: 100,
       date: new Date(),
       address: "456 Elm St, Anytown USA",
       country: "US",
@@ -118,6 +148,7 @@ export class HomepageComponent
     {
       name: "Food Festival",
       price: 30,
+      numberOfTickets: 50,
       date: new Date(),
       address: "789 Oak St, Anytown USA",
       country: "IT",
@@ -128,6 +159,7 @@ export class HomepageComponent
     {
       name: "Food Festival",
       price: 30,
+      numberOfTickets: 50,
       date: new Date(),
       address: "Avenida Lourenço Peixinho",
       country: "PT",
@@ -142,6 +174,7 @@ export class HomepageComponent
   public selectAndOpen(content: TemplateRef<any>, event: any): void
   {
     this.open(content);
+    this.eventForm.patchValue(event);
     this.selectedEvent = event;
     this.imageUrl = event.imageUrl;
   }
@@ -186,9 +219,11 @@ export class HomepageComponent
     {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () =>
+      reader.onload = async () =>
       {
         this.imageUrl = reader.result as string;
+
+
       };
     }
   }
@@ -196,5 +231,35 @@ export class HomepageComponent
   public removeImage(): void
   {
     this.imageUrl = undefined;
+  }
+
+  private async saveInIPFS(): Promise<string>
+  {
+    const helia = await createHelia();
+    const s = strings(helia);
+
+    const myImmutableAddress = await s.add(this.imageUrl as string);
+
+    return myImmutableAddress.toString();
+  }
+
+  public async saveEvent(modal: any): Promise<void>
+  {
+    await this.saveInIPFS().then((image: string) =>
+    {
+      this.eventForm.get("imageUrl")?.setValue(image);
+    });
+
+    modal.close();
+  }
+
+  public async saveEditedEvent(modal: any): Promise<void>
+  {
+    await this.saveInIPFS().then((image: string) =>
+    {
+      this.eventForm.get("imageUrl")?.setValue(image);
+    });
+
+    modal.close();
   }
 }
