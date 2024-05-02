@@ -1,6 +1,6 @@
 
 import { NgClass } from '@angular/common';
-import { Component, computed, inject, TemplateRef } from '@angular/core';
+import { Component, computed, inject, OnInit, TemplateRef } from '@angular/core';
 import {
   ConnectionStore,
   injectConnected,
@@ -21,6 +21,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import { EventCardComponent } from './event-card/event-card.component';
+import { createHelia } from 'helia';
+import { strings } from '@helia/strings';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { clusterApiUrl, Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { AnchorProvider, Idl, Program } from '@project-serum/anchor';
 import idl from '../../assets/idl/ticketingsystem.json';
@@ -39,14 +42,16 @@ import idl from '../../assets/idl/ticketingsystem.json';
     MatFormFieldModule,
     MatDatepickerModule,
     MatSelectModule,
-    EventCardComponent
+    EventCardComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './homepage.component.html',
   providers: [provideNativeDateAdapter()],
   styleUrl: './homepage.component.scss'
 })
-export class HomepageComponent
+export class HomepageComponent implements OnInit
 {
+  public helia: any;
   public program: Program;
   public readonly wallet = injectWallet();
   public readonly connected = injectConnected();
@@ -55,6 +60,18 @@ export class HomepageComponent
   public connection: Connection;
   public provider: AnchorProvider;
   public LAMPORTS_PER_SOL = 1000000000;
+
+  public eventForm = new FormGroup({
+    name: new FormControl(''),
+    price: new FormControl(0),
+    numberOfTickets: new FormControl(0),
+    date: new FormControl(''),
+    address: new FormControl(''),
+    country: new FormControl(''),
+    city: new FormControl(''),
+    description: new FormControl(''),
+    imageUrl: new FormControl(''),
+  });
 
   public selectedEvent = {
     name: '',
@@ -107,6 +124,7 @@ export class HomepageComponent
     {
       name: "Concert in the Park",
       price: 50,
+      numberOfTickets: 50,
       date: new Date(),
       address: "123 Main St, Anytown USA",
       country: "US",
@@ -117,6 +135,7 @@ export class HomepageComponent
     {
       name: "Tech Conference",
       price: 200,
+      numberOfTickets: 100,
       date: new Date(),
       address: "456 Elm St, Anytown USA",
       country: "US",
@@ -127,6 +146,7 @@ export class HomepageComponent
     {
       name: "Food Festival",
       price: 30,
+      numberOfTickets: 50,
       date: new Date(),
       address: "789 Oak St, Anytown USA",
       country: "IT",
@@ -137,6 +157,7 @@ export class HomepageComponent
     {
       name: "Food Festival",
       price: 30,
+      numberOfTickets: 50,
       date: new Date(),
       address: "Avenida Lourenço Peixinho",
       country: "PT",
@@ -175,7 +196,7 @@ export class HomepageComponent
         );
 
         this.program = new Program(idl as Idl, programID, this.provider);
-        
+
         this.hdWalletStore.connected$.subscribe(async () => {
           console.log('ESTOU AQUI');
           const eventAccounts = await this.program.account.event.all();
@@ -185,7 +206,7 @@ export class HomepageComponent
     })
 
 
-    
+
   }
 
   public async addNewEvent(modal: any): Promise<void> {
@@ -203,6 +224,7 @@ export class HomepageComponent
   public selectAndOpen(content: TemplateRef<any>, event: any): void
   {
     this.open(content);
+    this.eventForm.patchValue(event);
     this.selectedEvent = event;
     this.imageUrl = event.imageUrl;
   }
@@ -247,9 +269,11 @@ export class HomepageComponent
     {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () =>
+      reader.onload = async () =>
       {
         this.imageUrl = reader.result as string;
+
+
       };
     }
   }
@@ -257,5 +281,35 @@ export class HomepageComponent
   public removeImage(): void
   {
     this.imageUrl = undefined;
+  }
+
+  private async saveInIPFS(): Promise<string>
+  {
+    const helia = await createHelia();
+    const s = strings(helia);
+
+    const myImmutableAddress = await s.add(this.imageUrl as string);
+
+    return myImmutableAddress.toString();
+  }
+
+  public async saveEvent(modal: any): Promise<void>
+  {
+    await this.saveInIPFS().then((image: string) =>
+    {
+      this.eventForm.get("imageUrl")?.setValue(image);
+    });
+
+    modal.close();
+  }
+
+  public async saveEditedEvent(modal: any): Promise<void>
+  {
+    await this.saveInIPFS().then((image: string) =>
+    {
+      this.eventForm.get("imageUrl")?.setValue(image);
+    });
+
+    modal.close();
   }
 }
