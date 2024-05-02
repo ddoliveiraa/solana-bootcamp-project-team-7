@@ -24,7 +24,6 @@ import { EventCardComponent } from './event-card/event-card.component';
 import { clusterApiUrl, Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { AnchorProvider, Idl, Program } from '@project-serum/anchor';
 import idl from '../../assets/idl/ticketingsystem.json';
-import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 
 @Component({
   selector: 'app-homepage',
@@ -55,6 +54,7 @@ export class HomepageComponent
   public readonly walletName = computed(() => this.wallet()?.adapter.name ?? 'None');
   public connection: Connection;
   public provider: AnchorProvider;
+  public LAMPORTS_PER_SOL = 1000000000;
 
   public selectedEvent = {
     name: '',
@@ -155,45 +155,33 @@ export class HomepageComponent
 
   public async ngOnInit(): Promise<void> {
     this.hdConnectionStore.setEndpoint('https://api.devnet.solana.com');
-    this.setProvider();
+    this.setProviderAndConnect();
+    
   }
 
-  public async setProvider(): Promise<void> {
+  public async setProviderAndConnect(): Promise<void> {
     const programID = new PublicKey(
       'BWmuCxJqRqUwXu7rH4oJ5fYUQJjpu5umSw3SUidkY1Lq'
     );
-    const commitment = 'processed';
-    const preflightCommitment = 'processed';
 
     this.connection = new Connection(clusterApiUrl("devnet"));
-
-    /*let wallet = new NodeWallet(new Keypair());
-    const provider = new AnchorProvider(this.connection, wallet, {
-      commitment: "processed",
-    });
-    const program = new Program(
-      idl as Idl,
-      programID,
-      provider
-    );*/
 
 
     this.hdWalletStore.anchorWallet$.subscribe((wallet) => {
       if (wallet) {
-        console.log('here');
         this.provider = new AnchorProvider(
           this.connection,
           wallet,
           { commitment: "processed" }
         );
 
-        console.log('provider ', this.provider);
-
-
-        this.hdWalletStore.connected$.subscribe((connected) => {
-          console.log('Connected: ', connected);
-        });
         this.program = new Program(idl as Idl, programID, this.provider);
+        
+        this.hdWalletStore.connected$.subscribe(async () => {
+          console.log('ESTOU AQUI');
+          const eventAccounts = await this.program.account.event.all();
+          console.log('eventAccounts ', eventAccounts);
+        });
       }
     })
 
@@ -204,14 +192,11 @@ export class HomepageComponent
   public async addNewEvent(modal: any): Promise<void> {
     const event = Keypair.generate();
 
-    await this.program.methods.addNewEvent(Date.now().toString(), 3, "Portugal", "Aveiro", "Address", "Description", 100).accounts({
+    await this.program.methods.addNewEvent(Date.now().toString(), this.LAMPORTS_PER_SOL/10, "Portugal", "Aveiro", "Address", "Description", 100).accounts({
       event: event.publicKey,
       creator: this.provider.wallet.publicKey,
       systemProgram: SystemProgram.programId,
     }).signers([event]).rpc();
-
-    /*const eventAccounts = await this.program.account.event.all();
-    console.log(eventAccounts);*/
 
     modal.close();
   }
