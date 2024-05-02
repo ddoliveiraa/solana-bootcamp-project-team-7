@@ -156,12 +156,11 @@ export class HomepageComponent
   public async ngOnInit(): Promise<void> {
     this.hdConnectionStore.setEndpoint('https://api.devnet.solana.com');
     this.setProviderAndConnect();
-    
   }
 
   public async setProviderAndConnect(): Promise<void> {
     const programID = new PublicKey(
-      'BWmuCxJqRqUwXu7rH4oJ5fYUQJjpu5umSw3SUidkY1Lq'
+      'HCUmRcJhzbPHcqQYSQSknrCieo5n5huERQ9NryBHdbxN'
     );
 
     this.connection = new Connection(clusterApiUrl("devnet"));
