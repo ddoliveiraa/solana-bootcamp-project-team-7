@@ -49,6 +49,14 @@
         {
           "name": "initialAmountOfTickets",
           "type": "i32"
+        },
+        {
+          "name": "imageUrl",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
         }
       ]
     },
@@ -141,6 +149,14 @@
         {
           "name": "initialAmountOfTickets",
           "type": "i32"
+        },
+        {
+          "name": "imageUrl",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
         }
       ]
     }
@@ -190,6 +206,14 @@
           {
             "name": "amountOfTicketsSold",
             "type": "i32"
+          },
+          {
+            "name": "imageUrl",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
           }
         ]
       }

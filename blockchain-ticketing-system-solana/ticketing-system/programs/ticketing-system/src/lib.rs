@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("BWmuCxJqRqUwXu7rH4oJ5fYUQJjpu5umSw3SUidkY1Lq");
+declare_id!("8ehbcUofKS5iPesjv6a8bDfuayeABcQ3vRbC7QfHizq5");
 
 #[program]
 pub mod ticketingsystem {
@@ -14,7 +14,9 @@ pub mod ticketingsystem {
         city: String,
         address: String,
         description: String,
-        initial_amount_of_tickets: i32
+        initial_amount_of_tickets: i32,
+        image_url: String,
+        name: String
     ) -> Result<()> {
         let event = &mut ctx.accounts.event;
         let creator = &ctx.accounts.creator;
@@ -29,6 +31,8 @@ pub mod ticketingsystem {
         event.description = description;
         event.initial_amount_of_tickets = initial_amount_of_tickets;
         event.amount_of_tickets_sold = 0;
+        event.image_url = image_url;
+        event.name = name;
 
         Ok(())
     }
@@ -40,7 +44,9 @@ pub mod ticketingsystem {
         city: String,
         address: String,
         description: String,
-        initial_amount_of_tickets: i32
+        initial_amount_of_tickets: i32,
+        image_url: String,
+        name: String
     ) -> Result<()> {
         let event = &mut ctx.accounts.event;
         let creator = &ctx.accounts.creator;
@@ -55,6 +61,8 @@ pub mod ticketingsystem {
         event.address = address;
         event.description = description;
         event.initial_amount_of_tickets = initial_amount_of_tickets;
+        event.image_url = image_url;
+        event.name = name;
 
         Ok(())
     }
@@ -67,7 +75,7 @@ pub mod ticketingsystem {
             return Err(ErrorCode::InvalidCreator.into())
         }
 
-        if event.initial_amount_of_tickets != 0 {
+        if event.amount_of_tickets_sold != 0 {
             return Err(ErrorCode::InvalidDelete.into())
         }
 
@@ -160,7 +168,9 @@ pub struct Event {
     pub address: String,
     pub description: String,
     pub initial_amount_of_tickets: i32,
-    pub amount_of_tickets_sold: i32
+    pub amount_of_tickets_sold: i32,
+    pub image_url: String,
+    pub name: String,
 }
 
 const DISCRIMINATOR_LENGTH: usize = 8;
@@ -174,6 +184,8 @@ const ADDRESS_LENGTH: usize = 50 * 4; // 50 chars max.
 const DESCRIPTION_LENGTH: usize = 280 * 4; // 280 chars max.
 const INITIAL_AMOUNT_OF_TICKETS_LENGTH: usize = 4;
 const AMOUNT_OF_TICKETS_SOLD_LENGTH: usize = 4;
+const IMAGE_URL_LENGTH: usize = 100 * 4; // 100 chars max.
+const NAME_LENGTH: usize = 50 * 4; // 50 chars max.
 
 impl Event {
     const LEN: usize = DISCRIMINATOR_LENGTH
@@ -186,7 +198,9 @@ impl Event {
         + ADDRESS_LENGTH
         + DESCRIPTION_LENGTH
         + INITIAL_AMOUNT_OF_TICKETS_LENGTH
-        + AMOUNT_OF_TICKETS_SOLD_LENGTH;
+        + AMOUNT_OF_TICKETS_SOLD_LENGTH
+        + IMAGE_URL_LENGTH
+        + NAME_LENGTH;
 }
 
 #[account]
@@ -203,7 +217,7 @@ const EVENT_ID_LENGTH: usize = 32;
 const BUYER_ID_LENGTH: usize = 32;
 const TRANSACTION_DATE_LENGTH: usize = 8;
 const AMOUNT_LENGTH: usize = 4;
-const TOTAL_PRICE_LENGTH: usize = 4;
+const TOTAL_PRICE_LENGTH: usize = 200;
 
 impl Ticket {
     const LEN: usize = DISCRIMINATOR_LENGTH

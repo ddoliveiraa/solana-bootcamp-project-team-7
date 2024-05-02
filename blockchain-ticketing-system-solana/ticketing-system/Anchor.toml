@@ -5,17 +5,17 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-ticketing_system = "BWmuCxJqRqUwXu7rH4oJ5fYUQJjpu5umSw3SUidkY1Lq"
+ticketing_system = "8ehbcUofKS5iPesjv6a8bDfuayeABcQ3vRbC7QfHizq5"
 
 [programs.devnet]
-ticketing_system = "BWmuCxJqRqUwXu7rH4oJ5fYUQJjpu5umSw3SUidkY1Lq"
+ticketing_system = "8ehbcUofKS5iPesjv6a8bDfuayeABcQ3vRbC7QfHizq5"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
 cluster = "devnet"
-wallet = "~/.config/solana/id.json"
+wallet = "~/.config/solana/my-keypair.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

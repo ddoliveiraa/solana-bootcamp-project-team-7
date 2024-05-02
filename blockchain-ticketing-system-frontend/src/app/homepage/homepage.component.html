@@ -7,6 +7,7 @@
           @for (event of events; track event)
           {
             <app-event-card
+              [eventAccount]="event.account"
               [name]="event.name"
               [price]="event.price"
               [date]="event.date"
@@ -16,6 +17,7 @@
               [imageUrl]="event.imageUrl"
               (viewEvent)="selectAndOpen(eventDetails, event)"
               (editEvent)="selectAndOpen(editEvent, event)"
+              (deleteEvent)="deleteEvent(event)"
             >
             </app-event-card>
           }
@@ -162,8 +164,10 @@
     <div>
     </div>
 	</div>
+  
 	<div class="modal-footer">
-    <button mat-raised-button color="primary" (click)="modal.close('Save click')">Buy</button>
+    <input matInput type="number" [(ngModel)]="amountToBuy">
+    <button mat-raised-button color="primary" (click)="buy()">Buy</button>
 	</div>
 </ng-template>
 

@@ -14,6 +14,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 })
 export class EventCardComponent
 {
+  @Input() public eventAccount: any;
   @Input() public name: string | undefined;
   @Input() public price: number | undefined;
   @Input() public date: Date | undefined;

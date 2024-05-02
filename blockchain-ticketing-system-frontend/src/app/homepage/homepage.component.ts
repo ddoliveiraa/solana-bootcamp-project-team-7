@@ -23,7 +23,7 @@ import {MatSelectModule} from '@angular/material/select';
 import { EventCardComponent } from './event-card/event-card.component';
 import { createHelia } from 'helia';
 import { strings } from '@helia/strings';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { clusterApiUrl, Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { AnchorProvider, Idl, Program } from '@project-serum/anchor';
 import idl from '../../assets/idl/ticketingsystem.json';
@@ -43,7 +43,8 @@ import idl from '../../assets/idl/ticketingsystem.json';
     MatDatepickerModule,
     MatSelectModule,
     EventCardComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   templateUrl: './homepage.component.html',
   providers: [provideNativeDateAdapter()],
@@ -60,6 +61,7 @@ export class HomepageComponent implements OnInit
   public connection: Connection;
   public provider: AnchorProvider;
   public LAMPORTS_PER_SOL = 1000000000;
+  public amountToBuy = 0;
 
   public eventForm = new FormGroup({
     name: new FormControl(''),
@@ -73,17 +75,7 @@ export class HomepageComponent implements OnInit
     imageUrl: new FormControl(''),
   });
 
-  public selectedEvent = {
-    name: '',
-    price: 0,
-    numberOfTickets: 0,
-    date: '',
-    address: '',
-    country: '',
-    city: '',
-    description: '',
-    imageUrl: '',
-  };
+  public selectedEvent: any;
 
   private modalService = inject(NgbModal);
 	closeResult = '';
@@ -120,52 +112,7 @@ export class HomepageComponent implements OnInit
     { code: "US", label: "🇺🇸 United States" },
   ];
 
-  public events = [
-    {
-      name: "Concert in the Park",
-      price: 50,
-      numberOfTickets: 50,
-      date: new Date(),
-      address: "123 Main St, Anytown USA",
-      country: "US",
-      city: "New York",
-      description: "Join us for an evening of live music and fun in Central Park.",
-      imageUrl: ""
-    },
-    {
-      name: "Tech Conference",
-      price: 200,
-      numberOfTickets: 100,
-      date: new Date(),
-      address: "456 Elm St, Anytown USA",
-      country: "US",
-      city: "Berlin",
-      description: "A conference for tech enthusiasts and professionals, featuring talks and workshops on the latest trends and technologies.",
-      imageUrl: ""
-    },
-    {
-      name: "Food Festival",
-      price: 30,
-      numberOfTickets: 50,
-      date: new Date(),
-      address: "789 Oak St, Anytown USA",
-      country: "IT",
-      city: "Rome",
-      description: "Experience the rich flavors of Italian cuisine at our annual food festival.",
-      imageUrl: ""
-    },
-    {
-      name: "Food Festival",
-      price: 30,
-      numberOfTickets: 50,
-      date: new Date(),
-      address: "Avenida Lourenço Peixinho",
-      country: "PT",
-      city: "Aveiro",
-      description: "Experience the rich flavors of Italian cuisine at our annual food festival.",
-      imageUrl: ""
-    }
-  ];
+  public events: any[] = [];
 
   public imageUrl: string | undefined;
 
@@ -181,7 +128,7 @@ export class HomepageComponent implements OnInit
 
   public async setProviderAndConnect(): Promise<void> {
     const programID = new PublicKey(
-      'HCUmRcJhzbPHcqQYSQSknrCieo5n5huERQ9NryBHdbxN'
+      '8ehbcUofKS5iPesjv6a8bDfuayeABcQ3vRbC7QfHizq5'
     );
 
     this.connection = new Connection(clusterApiUrl("devnet"));
@@ -198,8 +145,21 @@ export class HomepageComponent implements OnInit
         this.program = new Program(idl as Idl, programID, this.provider);
 
         this.hdWalletStore.connected$.subscribe(async () => {
-          console.log('ESTOU AQUI');
           const eventAccounts = await this.program.account.event.all();
+          eventAccounts.forEach((eventAccount: any) => {
+            this.events.push({
+              eventAccount: eventAccount,
+              name: eventAccount.account.name,
+              price: eventAccount.account.price,
+              numberOfTickets: eventAccount.account.initialAmountOfTickets,
+              date: new Date(Number(eventAccount.account.creationDate)),
+              address: eventAccount.account.address,
+              country: eventAccount.account.country,
+              city: eventAccount.account.city,
+              description: eventAccount.account.description,
+              imageUrl: ""
+            });
+          })
           console.log('eventAccounts ', eventAccounts);
         });
       }
@@ -210,9 +170,19 @@ export class HomepageComponent implements OnInit
   }
 
   public async addNewEvent(modal: any): Promise<void> {
+    /*await this.saveInIPFS().then((image: string) =>
+    {
+      this.eventForm.get("imageUrl")?.setValue("bafkreib6c25gbncjav7yo6k2ynwgcvtk4jjhigunrfddp7g3m6t25qcnky");
+    });
+
+    console.log('this.eventForm.value.imageUrl ', this.eventForm.value.imageUrl);*/
+    this.eventForm.get("imageUrl")?.setValue("bafkreib6c25gbncjav7yo6k2ynwgcvtk4jjhigunrfddp7g3m6t25qcnky");
+
     const event = Keypair.generate();
 
-    await this.program.methods.addNewEvent(Date.now().toString(), this.LAMPORTS_PER_SOL/10, "Portugal", "Aveiro", "Address", "Description", 100).accounts({
+    await this.program.methods.addNewEvent(new Date(`${this.eventForm.value.date}`).getTime().toString(), parseInt(`${this.eventForm.value.price}`), 
+    this.eventForm.value.country, this.eventForm.value.city, this.eventForm.value.address, this.eventForm.value.description, parseInt(`${this.eventForm.value.numberOfTickets}`), 
+    this.eventForm.value.imageUrl, this.eventForm.value.name).accounts({
       event: event.publicKey,
       creator: this.provider.wallet.publicKey,
       systemProgram: SystemProgram.programId,
@@ -221,12 +191,38 @@ export class HomepageComponent implements OnInit
     modal.close();
   }
 
+  public async buy(): Promise<void>
+  {
+    const ticket = Keypair.generate();
+
+    await this.program.methods.buyTicket(new Date().getTime().toString(), parseInt(`${this.amountToBuy}`)).accounts({
+      ticket: ticket.publicKey,
+      buyer: this.provider.wallet.publicKey,
+      event: this.selectedEvent.eventAccount.publicKey,
+      creator: this.selectedEvent.eventAccount.account.creator,
+      systemProgram: SystemProgram.programId,
+    }).signers([ticket]).rpc();
+
+    const ticketAccounts = await this.program.account.ticket.all();
+    console.log('ticket accounts ', ticketAccounts);
+  }
+
   public selectAndOpen(content: TemplateRef<any>, event: any): void
   {
     this.open(content);
     this.eventForm.patchValue(event);
     this.selectedEvent = event;
     this.imageUrl = event.imageUrl;
+  }
+
+  public async deleteEvent(event: any): Promise<void>
+  {
+    console.log('event.eventAccount ', event);
+    await this.program.methods.deleteEvent().accounts({
+      event: event.eventAccount.publicKey,
+      creator: this.provider.wallet.publicKey,
+      systemProgram: SystemProgram.programId,
+    }).signers([]).rpc();
   }
 
 	public open(content: TemplateRef<any>): void
@@ -293,22 +289,17 @@ export class HomepageComponent implements OnInit
     return myImmutableAddress.toString();
   }
 
-  public async saveEvent(modal: any): Promise<void>
-  {
-    await this.saveInIPFS().then((image: string) =>
-    {
-      this.eventForm.get("imageUrl")?.setValue(image);
-    });
-
-    modal.close();
-  }
-
   public async saveEditedEvent(modal: any): Promise<void>
   {
-    await this.saveInIPFS().then((image: string) =>
-    {
-      this.eventForm.get("imageUrl")?.setValue(image);
-    });
+
+    this.eventForm.get("imageUrl")?.setValue("bafkreib6c25gbncjav7yo6k2ynwgcvtk4jjhigunrfddp7g3m6t25qcnky");
+
+    await this.program.methods.addNewEvent(new Date(`${this.eventForm.value.date}`).getTime().toString(), parseInt(`${this.eventForm.value.price}`), 
+    this.eventForm.value.country, this.eventForm.value.city, this.eventForm.value.address, this.eventForm.value.description, parseInt(`${this.eventForm.value.numberOfTickets}`), 
+    this.eventForm.value.imageUrl, this.eventForm.value.name).accounts({
+      event: this.selectedEvent.eventAccount.publicKey,
+      creator: this.provider.wallet.publicKey
+    }).signers([this.selectedEvent.eventAccount]).rpc();
 
     modal.close();
   }
