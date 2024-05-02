@@ -2,10 +2,14 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "types": ["node"],
+    "typeRoots": ["node_modules/@types"],
+    "resolveJsonModule": true,
+    "strictPropertyInitialization": false,
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,

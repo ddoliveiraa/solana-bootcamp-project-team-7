@@ -1,0 +1,242 @@
+{
+  "version": "0.1.0",
+  "name": "ticketingsystem",
+  "instructions": [
+    {
+      "name": "addNewEvent",
+      "accounts": [
+        {
+          "name": "event",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "creationDate",
+          "type": "string"
+        },
+        {
+          "name": "price",
+          "type": "i32"
+        },
+        {
+          "name": "country",
+          "type": "string"
+        },
+        {
+          "name": "city",
+          "type": "string"
+        },
+        {
+          "name": "address",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "initialAmountOfTickets",
+          "type": "i32"
+        }
+      ]
+    },
+    {
+      "name": "buyTicket",
+      "accounts": [
+        {
+          "name": "ticket",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "event",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "transactionDate",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "i32"
+        }
+      ]
+    },
+    {
+      "name": "deleteEvent",
+      "accounts": [
+        {
+          "name": "event",
+          "isMut": true
+        },
+        {
+          "name": "creator",
+          "isMut": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "editEvent",
+      "accounts": [
+        {
+          "name": "event",
+          "isMut": true
+        },
+        {
+          "name": "creator"
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "i32"
+        },
+        {
+          "name": "country",
+          "type": "string"
+        },
+        {
+          "name": "city",
+          "type": "string"
+        },
+        {
+          "name": "address",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "initialAmountOfTickets",
+          "type": "i32"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Event",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "publicKey"
+          },
+          {
+            "name": "creator",
+            "type": "publicKey"
+          },
+          {
+            "name": "creationDate",
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "type": "i32"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "initialAmountOfTickets",
+            "type": "i32"
+          },
+          {
+            "name": "amountOfTicketsSold",
+            "type": "i32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ticket",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "publicKey"
+          },
+          {
+            "name": "eventId",
+            "type": "publicKey"
+          },
+          {
+            "name": "buyerId",
+            "type": "publicKey"
+          },
+          {
+            "name": "transactionDate",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "i32"
+          },
+          {
+            "name": "totalPrice",
+            "type": "i32"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidDelete",
+      "msg": "NOT ALLOWED TO DELETE"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidCreator",
+      "msg": "Invalid Creator"
+    }
+  ]
+}
