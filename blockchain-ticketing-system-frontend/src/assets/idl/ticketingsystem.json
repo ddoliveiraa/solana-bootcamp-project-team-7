@@ -1,43 +1,29 @@
 {
-  "address": "BWmuCxJqRqUwXu7rH4oJ5fYUQJjpu5umSw3SUidkY1Lq",
-  "metadata": {
-    "name": "ticketingsystem",
-    "version": "0.1.0",
-    "spec": "0.1.0",
-    "description": "Created with Anchor"
-  },
+  "version": "0.1.0",
+  "name": "ticketingsystem",
   "instructions": [
     {
-      "name": "add_new_event",
-      "discriminator": [
-        3,
-        93,
-        90,
-        63,
-        78,
-        138,
-        236,
-        213
-      ],
+      "name": "addNewEvent",
       "accounts": [
         {
           "name": "event",
-          "writable": true,
-          "signer": true
+          "isMut": true,
+          "isSigner": true
         },
         {
           "name": "creator",
-          "writable": true,
-          "signer": true
+          "isMut": true,
+          "isSigner": true
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": [
         {
-          "name": "creation_date",
+          "name": "creationDate",
           "type": "string"
         },
         {
@@ -61,48 +47,43 @@
           "type": "string"
         },
         {
-          "name": "initial_amount_of_tickets",
+          "name": "initialAmountOfTickets",
           "type": "i32"
         }
       ]
     },
     {
-      "name": "buy_ticket",
-      "discriminator": [
-        11,
-        24,
-        17,
-        193,
-        168,
-        116,
-        164,
-        169
-      ],
+      "name": "buyTicket",
       "accounts": [
         {
           "name": "ticket",
-          "writable": true,
-          "signer": true
+          "isMut": true,
+          "isSigner": true
         },
         {
           "name": "buyer",
-          "writable": true,
-          "signer": true
+          "isMut": true,
+          "isSigner": true
         },
         {
-          "name": "event"
+          "name": "event",
+          "isMut": true,
+          "isSigner": false
         },
         {
-          "name": "creator"
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": [
         {
-          "name": "transaction_date",
+          "name": "transactionDate",
           "type": "string"
         },
         {
@@ -112,45 +93,25 @@
       ]
     },
     {
-      "name": "delete_event",
-      "discriminator": [
-        103,
-        111,
-        95,
-        106,
-        232,
-        24,
-        190,
-        84
-      ],
+      "name": "deleteEvent",
       "accounts": [
         {
           "name": "event",
-          "writable": true
+          "isMut": true
         },
         {
           "name": "creator",
-          "writable": true
+          "isMut": true
         }
       ],
       "args": []
     },
     {
-      "name": "edit_event",
-      "discriminator": [
-        175,
-        88,
-        87,
-        49,
-        41,
-        144,
-        33,
-        42
-      ],
+      "name": "editEvent",
       "accounts": [
         {
           "name": "event",
-          "writable": true
+          "isMut": true
         },
         {
           "name": "creator"
@@ -178,7 +139,7 @@
           "type": "string"
         },
         {
-          "name": "initial_amount_of_tickets",
+          "name": "initialAmountOfTickets",
           "type": "i32"
         }
       ]
@@ -187,59 +148,19 @@
   "accounts": [
     {
       "name": "Event",
-      "discriminator": [
-        125,
-        192,
-        125,
-        158,
-        9,
-        115,
-        152,
-        233
-      ]
-    },
-    {
-      "name": "Ticket",
-      "discriminator": [
-        41,
-        228,
-        24,
-        165,
-        78,
-        90,
-        235,
-        200
-      ]
-    }
-  ],
-  "errors": [
-    {
-      "code": 6000,
-      "name": "InvalidDelete",
-      "msg": "NOT ALLOWED TO DELETE"
-    },
-    {
-      "code": 6001,
-      "name": "InvalidCreator",
-      "msg": "Invalid Creator"
-    }
-  ],
-  "types": [
-    {
-      "name": "Event",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "id",
-            "type": "pubkey"
+            "type": "publicKey"
           },
           {
             "name": "creator",
-            "type": "pubkey"
+            "type": "publicKey"
           },
           {
-            "name": "creation_date",
+            "name": "creationDate",
             "type": "string"
           },
           {
@@ -263,11 +184,11 @@
             "type": "string"
           },
           {
-            "name": "initial_amount_of_tickets",
+            "name": "initialAmountOfTickets",
             "type": "i32"
           },
           {
-            "name": "amount_of_tickets_sold",
+            "name": "amountOfTicketsSold",
             "type": "i32"
           }
         ]
@@ -280,18 +201,18 @@
         "fields": [
           {
             "name": "id",
-            "type": "pubkey"
+            "type": "publicKey"
           },
           {
-            "name": "event_id",
-            "type": "pubkey"
+            "name": "eventId",
+            "type": "publicKey"
           },
           {
-            "name": "buyer_id",
-            "type": "pubkey"
+            "name": "buyerId",
+            "type": "publicKey"
           },
           {
-            "name": "transaction_date",
+            "name": "transactionDate",
             "type": "string"
           },
           {
@@ -299,11 +220,23 @@
             "type": "i32"
           },
           {
-            "name": "total_price",
+            "name": "totalPrice",
             "type": "i32"
           }
         ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidDelete",
+      "msg": "NOT ALLOWED TO DELETE"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidCreator",
+      "msg": "Invalid Creator"
     }
   ]
 }

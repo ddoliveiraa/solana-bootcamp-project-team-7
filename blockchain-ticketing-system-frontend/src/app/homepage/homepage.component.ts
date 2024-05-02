@@ -21,9 +21,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import { EventCardComponent } from './event-card/event-card.component';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { clusterApiUrl, Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { AnchorProvider, Idl, Program } from '@project-serum/anchor';
 import idl from '../../assets/idl/ticketingsystem.json';
+import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 
 @Component({
   selector: 'app-homepage',
@@ -164,28 +165,55 @@ export class HomepageComponent
     const commitment = 'processed';
     const preflightCommitment = 'processed';
 
-    this.connection = new Connection(
-      'https://api.devnet.solana.com',
-      'processed'
-    );
+    this.connection = new Connection(clusterApiUrl("devnet"));
+
+    /*let wallet = new NodeWallet(new Keypair());
+    const provider = new AnchorProvider(this.connection, wallet, {
+      commitment: "processed",
+    });
+    const program = new Program(
+      idl as Idl,
+      programID,
+      provider
+    );*/
 
 
     this.hdWalletStore.anchorWallet$.subscribe((wallet) => {
       if (wallet) {
-      this.provider = new AnchorProvider(
-        this.connection,
-        wallet,
-        { preflightCommitment, commitment }
-      );
+        console.log('here');
+        this.provider = new AnchorProvider(
+          this.connection,
+          wallet,
+          { commitment: "processed" }
+        );
 
-      this.program = new Program(idl as unknown as Idl, programID, this.provider);
+        console.log('provider ', this.provider);
+
+
+        this.hdWalletStore.connected$.subscribe((connected) => {
+          console.log('Connected: ', connected);
+        });
+        this.program = new Program(idl as Idl, programID, this.provider);
       }
     })
 
 
-    this.hdWalletStore.connected$.subscribe((connected) => {
-      console.log('Connected: ', connected);
-    });
+    
+  }
+
+  public async addNewEvent(modal: any): Promise<void> {
+    const event = Keypair.generate();
+
+    await this.program.methods.addNewEvent(Date.now().toString(), 3, "Portugal", "Aveiro", "Address", "Description", 100).accounts({
+      event: event.publicKey,
+      creator: this.provider.wallet.publicKey,
+      systemProgram: SystemProgram.programId,
+    }).signers([event]).rpc();
+
+    /*const eventAccounts = await this.program.account.event.all();
+    console.log(eventAccounts);*/
+
+    modal.close();
   }
 
   public selectAndOpen(content: TemplateRef<any>, event: any): void
